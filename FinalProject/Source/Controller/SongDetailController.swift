@@ -25,8 +25,6 @@ class SongDetail: UIViewController, HttpProtocol{
     @IBOutlet weak var source: UILabel!
     @IBOutlet weak var albuumtitle: UILabel!
     
-    @IBOutlet weak var PlayCurrent: UIButton!
-    
     var musicUrl: String = "http://geci.me/api/lyric/"
     var lyricUrl: String = ""
     var pause: Bool = true
@@ -36,7 +34,6 @@ class SongDetail: UIViewController, HttpProtocol{
     var LyricData = Dictionary<String, String>()
     var imageData = Dictionary<String, UIImage>()
     var eHttp: HttpControl = HttpControl()
-    var TimeProgress: NSTimer?
     //special for song data from UserView
     var userUrl: String = ""
     var userImage: String = ""
@@ -46,7 +43,6 @@ class SongDetail: UIViewController, HttpProtocol{
     var userPublic_time: String = ""
     var userAlbumtitle: String = ""
     var markForUserSegue: String = ""
-    var currentMusicUrl: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,7 +81,7 @@ class SongDetail: UIViewController, HttpProtocol{
         
         playButton.addTarget(self, action: "playActions:", forControlEvents: UIControlEvents.TouchUpInside)
         nextbutton.addTarget(self, action: "nextActions:", forControlEvents: UIControlEvents.TouchUpInside)
-        PlayCurrent.addTarget(self, action: "playCurrent", forControlEvents: UIControlEvents.TouchUpInside)
+        //playCurrentSong.addTarget(self, action: "playCurrent", forControlEvents: UIControlEvents.TouchUpInside)
         self.LyricLabel.editable = false
         dispatch_async(dispatch_get_main_queue(), {
             () ->Void in
@@ -98,7 +94,6 @@ class SongDetail: UIViewController, HttpProtocol{
                 self.ifo_title.text = self.userTitle
                 self.publish.text = self.userPublic_time
                 self.markForUserSegue = ""
-                self.currentMusicUrl = self.userUrl
             } else {
                 self.artist.text = self.SongData["artist"] as? String
                 self.albuumtitle.text = self.SongData["albumtitle"] as? String
@@ -106,7 +101,6 @@ class SongDetail: UIViewController, HttpProtocol{
                 self.company.text = self.SongData["company"] as? String
                 self.ifo_title.text = self.SongData["title"] as? String
                 self.publish.text = self.SongData["public_time"] as? String
-                self.currentMusicUrl = self.SongData["url"] as! String
             }
             UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         })
@@ -253,34 +247,33 @@ class SongDetail: UIViewController, HttpProtocol{
         }
         else {
             var cid = MusicService.sharedMusicService.id
-            let reachabilityUtility = Reachability.reachabilityForInternetConnection()
-            if reachabilityUtility.isReachable() {
-                if cid < MusicService.sharedMusicService.tableData.count-1 {
-                    cid += 1
-                    self.updataPlaying(cid)
+            do {
+                let reachabilityUtility = try Reachability.reachabilityForInternetConnection()
+                if reachabilityUtility.isReachable() {
+                    if cid < MusicService.sharedMusicService.tableData.count-1 {
+                        cid += 1
+                        self.updataPlaying(cid)
+                    }
+                    else {
+                        cid = 0
+                        self.updataPlaying(cid)
+                    }
                 }
                 else {
-                    cid = 0
-                    self.updataPlaying(cid)
+                    UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
                 }
             }
-            else {
-                UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
+            catch _{
+                print("something wrong")
             }
             
             MusicService.sharedMusicService.id = cid
+            let image = UIImage(named: "pause_2") as UIImage!
+            self.playButton.setImage(image, forState: .Normal)
+            MusicService.sharedMusicService.pause = false
             //self.id = MusicService.sharedMusicService.id
         }
         //PlayViewController.playController.nextActions(nextbutton)
-    }
-    
-    func playCurrent(sender: UIButton!) {
-        MusicService.sharedMusicService.musicPlyaer.pause()
-        dispatch_async(dispatch_get_main_queue(), {
-            () ->Void in
-                MusicService.sharedMusicService.setMusic(self.currentMusicUrl)
-            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-        })
     }
     
     func updataPlaying(id: Int) {

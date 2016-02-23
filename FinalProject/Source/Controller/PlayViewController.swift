@@ -125,7 +125,6 @@ class PlayViewController: UIViewController{
         TimeProgress = NSTimer.scheduledTimerWithTimeInterval(0.4, target: self, selector: "TimeUpdate", userInfo: nil, repeats: true)
     }
     
-    
     func TimeUpdate() {
         let songlength: NSDictionary = MusicService.sharedMusicService.tableData[MusicService.sharedMusicService.id] as! NSDictionary
         let length: Double = songlength["length"] as! Double
@@ -199,62 +198,85 @@ class PlayViewController: UIViewController{
     
     func previousActions(sender: UIButton!) {
         var cid = MusicService.sharedMusicService.id
-        let reachabilityUtility = Reachability.reachabilityForInternetConnection()
-        if reachabilityUtility.isReachable() {
-            if cid > 0 {
-                cid = cid-1
-                self.updataPlaying(cid)
+        do {
+            let reachabilityUtility = try Reachability.reachabilityForInternetConnection()
+            if reachabilityUtility.isReachable() {
+                if cid > 0 {
+                    cid = cid-1
+                    self.updataPlaying(cid)
+                }
+                else {
+                    cid = MusicService.sharedMusicService.tableData.count-1
+                    self.updataPlaying(cid)
+                }
             }
             else {
-                cid = MusicService.sharedMusicService.tableData.count-1
-                self.updataPlaying(cid)
+                UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
             }
         }
-        else {
-            UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
+        catch _{
+            print("something wrong")
         }
+       
         MusicService.sharedMusicService.id = cid
         //self.id = MusicService.sharedMusicService.id
         self.ButtonIcon()
+        let image = UIImage(named: "pause_2") as UIImage!
+        self.pauseplay.setImage(image, forState: .Normal)
+        MusicService.sharedMusicService.pause = false
     }
     
     func nextActions(sender: UIButton!) {
         var cid = MusicService.sharedMusicService.id
-        let reachabilityUtility = Reachability.reachabilityForInternetConnection()
-        if reachabilityUtility.isReachable() {
-            if cid < MusicService.sharedMusicService.tableData.count-1 {
-                cid += 1
-                self.updataPlaying(cid)
+        do {
+            let reachabilityUtility = try Reachability.reachabilityForInternetConnection()
+            if reachabilityUtility.isReachable() {
+                if cid < MusicService.sharedMusicService.tableData.count-1 {
+                    cid += 1
+                    self.updataPlaying(cid)
+                }
+                else {
+                    cid = 0
+                    self.updataPlaying(cid)
+                }
             }
             else {
-                cid = 0
-                self.updataPlaying(cid)
+                UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
             }
+
         }
-        else {
-            UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
+        catch _{
+            print("something wrong")
         }
-        
         MusicService.sharedMusicService.id = cid
         //self.id = MusicService.sharedMusicService.id
         self.ButtonIcon()
+        let image = UIImage(named: "pause_2") as UIImage!
+        self.pauseplay.setImage(image, forState: .Normal)
+        MusicService.sharedMusicService.pause = false
     }
     
     func playerDidFinishPlaying() {
-        let reachabilityUtility = Reachability.reachabilityForInternetConnection()
-        if reachabilityUtility.isReachable() {
-            if MusicService.sharedMusicService.id < tableData.count-1 {
-                MusicService.sharedMusicService.id += 1
-                self.updataPlaying(MusicService.sharedMusicService.id)
+        do{
+            let reachabilityUtility = try Reachability.reachabilityForInternetConnection()
+            if reachabilityUtility.isReachable() {
+                if MusicService.sharedMusicService.id < tableData.count-1 {
+                    MusicService.sharedMusicService.id += 1
+                    self.updataPlaying(MusicService.sharedMusicService.id)
+                }
+                else {
+                    MusicService.sharedMusicService.id = 0
+                    self.updataPlaying(MusicService.sharedMusicService.id)
+                }
             }
             else {
-                MusicService.sharedMusicService.id = 0
-                self.updataPlaying(MusicService.sharedMusicService.id)
+                UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
             }
         }
-        else {
-            UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
+        catch _{
+            print("something wrong")
         }
+        
         self.ButtonIcon()
     }
     

@@ -197,22 +197,28 @@ class VolumeDetailController:UIViewController, UITableViewDataSource, UITableVie
     }
     
     override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
-        let result: Bool
+        var result: Bool = true
         switch identifier {
-        case .Some("volumeDetail2play"):
+        case "volumeDetail2play":
             fallthrough
-        case .Some("volumedetail2songdetail"):
-            let reachabilityUtility = Reachability.reachabilityForInternetConnection()
-            if reachabilityUtility.isReachable() {
-                result = true
+        case "volumedetail2songdetail":
+            do {
+                let reachabilityUtility = try Reachability.reachabilityForInternetConnection()
+                if reachabilityUtility.isReachable() {
+                    result = true
+                }
+                else {
+                    result = false
+                    UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
+                }
             }
-            else {
-                result = false
-                UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
+            catch _{
+                print("some thing happened")
             }
-        case .Some("volumeDetail2volumeList"):
+            
+        case "volumeDetail2volumeList":
             return true
-        case .Some("volumeDetail2playing"):
+        case "volumeDetail2playing":
             if MusicService.sharedMusicService.havePlayed == false {
                 let alert = UIAlertView()
                 alert.title = "No PlayList Slected"

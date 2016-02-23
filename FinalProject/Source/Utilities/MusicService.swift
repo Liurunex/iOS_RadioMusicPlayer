@@ -17,7 +17,6 @@ class MusicService {
     var id: Int = 0
     var vid: Int = 0
     var havePlayed: Bool = false
-    var TimeProgress: NSTimer?
     //var vid: Int = 0
     
     private init() {
@@ -51,7 +50,6 @@ class MusicService {
     }
     
     func setMusic(url: String) {
-        //TimeProgress?.invalidate()
         self.musicPlyaer.stop()
         self.musicPlyaer.contentURL = NSURL(string: url)
         self.musicPlyaer.play()
@@ -93,7 +91,7 @@ class MusicService {
             let imageUrl: NSURL = NSURL(string: url)!
             let request: NSURLRequest = NSURLRequest(URL: imageUrl)
             NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue(), completionHandler: {(response: NSURLResponse?, data: NSData?, error: NSError?) -> Void in
-                let Img = UIImage(data: data)
+                let Img = UIImage(data: data!)
                 self.imageData[url] = Img
                 rImg = Img!
             })
@@ -116,52 +114,69 @@ class MusicService {
         }
     }
     func previousActions() {
-        let reachabilityUtility = Reachability.reachabilityForInternetConnection()
-        if reachabilityUtility.isReachable() {
-            if self.id > 0 {
-                self.id = self.id-1
-                self.updataPlaying(id)
+        do {
+            let reachabilityUtility = try Reachability.reachabilityForInternetConnection()
+            if reachabilityUtility.isReachable() {
+                if self.id > 0 {
+                    self.id = self.id-1
+                    self.updataPlaying(id)
+                }
+                else {
+                    self.id = tableData.count-1
+                    self.updataPlaying(id)
+                }
             }
             else {
-                self.id = tableData.count-1
-                self.updataPlaying(id)
+                UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
             }
         }
-        else {
-            UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
+        catch _{
+            print("some thing happend")
         }
+        
     }
     func nextActions() {
-        let reachabilityUtility = Reachability.reachabilityForInternetConnection()
-        if reachabilityUtility.isReachable() {
-            if self.id < tableData.count-1 {
-                self.id += 1
-                self.updataPlaying(id)
+        do {
+            let reachabilityUtility = try Reachability.reachabilityForInternetConnection()
+            if reachabilityUtility.isReachable() {
+                if self.id < tableData.count-1 {
+                    self.id += 1
+                    self.updataPlaying(id)
+                }
+                else {
+                    self.id = 0
+                    self.updataPlaying(id)
+                }
             }
             else {
-                self.id = 0
-                self.updataPlaying(id)
+                UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
             }
         }
-        else {
-            UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
+        catch _{
+            print("some thing happened")
         }
+        
     }
     
     func playerDidFinishPlaying() {
-        let reachabilityUtility = Reachability.reachabilityForInternetConnection()
-        if reachabilityUtility.isReachable() {
-            if self.id < tableData.count-1 {
-                self.id += 1
-                self.updataPlaying(id)
+        do {
+            let reachabilityUtility = try Reachability.reachabilityForInternetConnection()
+            if reachabilityUtility.isReachable() {
+                if self.id < tableData.count-1 {
+                    self.id += 1
+                    self.updataPlaying(id)
+                }
+                else {
+                    self.id = 0
+                    self.updataPlaying(id)
+                }
             }
             else {
-                self.id = 0
-                self.updataPlaying(id)
+                UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
             }
         }
-        else {
-            UIAlertView(title: "No Internet Connection", message: "Please check your connection and try again.", delegate: nil, cancelButtonTitle: "OK").show()
+        catch _{
+            print("haha")
         }
     }
     

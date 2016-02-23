@@ -188,8 +188,8 @@ public class CoreDataService {
 				managedObjectModel = someManagedObjectModel
 				persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: managedObjectModel)
 
-				if let documentsDirectoryPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first as! String {
-					let storeRootPath = documentsDirectoryPath.stringByAppendingPathComponent("DataStore")
+				if let documentsDirectoryPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first as? String! {
+					let storeRootPath = (documentsDirectoryPath as NSString).stringByAppendingPathComponent("DataStore")
 
 					let fileManager = NSFileManager.defaultManager()
 					if !fileManager.fileExistsAtPath(storeRootPath) {
@@ -199,7 +199,7 @@ public class CoreDataService {
 						}
 					}
 
-					let persistentStorePath = storeRootPath.stringByAppendingPathComponent("\(CoreDataService.storeName).sqlite")
+					let persistentStorePath = (storeRootPath as NSString).stringByAppendingPathComponent("\(CoreDataService.storeName).sqlite")
 					let shouldSetupStore = !fileManager.fileExistsAtPath(persistentStorePath)
 					let persistentStoreOptions = [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
 

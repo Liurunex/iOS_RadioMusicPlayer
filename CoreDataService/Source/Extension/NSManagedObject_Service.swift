@@ -18,12 +18,17 @@ public extension NSManagedObject {
 		}
 		else {
 			let error: NSError?
-			if let success = managedObjectContext?.obtainPermanentIDsForObjects([self]) where success {
-				result = objectID
-			}
-			else {
-				print("Error obtaining permanent object ID for object \(self)\n\(error)")
-			}
+            do{
+                if let success = try managedObjectContext?.obtainPermanentIDsForObjects([self]){
+                    result = objectID
+                }
+                else {
+                    print("Error")
+                }
+            }
+            catch _{
+                print("haha")
+            }
 		}
 
 		return result

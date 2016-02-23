@@ -33,10 +33,10 @@ class VolumeService {
     // MARK: Initialization
     private init() {
         imagedata = ["1", "2", "3", "4", "5"]
-        titledata = ["Jazz", "Coffee", "Classic","Blues", "Folk"]
+        titledata = ["Jazz", "Coffee", "New Age","Blues", "Folk"]
         urldata = [ "http://douban.fm/j/mine/playlist?channel=10",
                     "http://douban.fm/j/mine/playlist?channel=20",
-                    "http://douban.fm/j/mine/playlist?channel=18",
+                    "http://douban.fm/j/mine/playlist?channel=23",
                     "http://douban.fm/j/mine/playlist?channel=24",
                     "http://douban.fm/j/mine/playlist?channel=7"]
     }

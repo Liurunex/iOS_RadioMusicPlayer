@@ -156,7 +156,7 @@ class UserController: UIViewController, NSFetchedResultsControllerDelegate, UICo
         let fetchRequest = NSFetchRequest(entityName: "User")
         fetchRequest.returnsObjectsAsFaults = false
         
-        var results = try? context.executeFetchRequest(fetchRequest)
+        let results = try? context.executeFetchRequest(fetchRequest)
         if let resultsArray = results {
             if resultsArray.count <= 0 {
                 // resultsArray is empty, so insert a new object

@@ -27,7 +27,7 @@ class HttpControl: NSObject {
         let task = session.dataTaskWithRequest(request){
             (data,response,error) -> Void in
             if error == nil {
-                if let jsonResult = (try? NSJSONSerialization.JSONObjectWithData(data,options:NSJSONReadingOptions.MutableContainers)) as? NSDictionary {
+                if let jsonResult = (try? NSJSONSerialization.JSONObjectWithData(data!,options:NSJSONReadingOptions.MutableContainers)) as? NSDictionary {
                     self.delegate?.didRecieveResults(jsonResult)
                 }
                 else {
